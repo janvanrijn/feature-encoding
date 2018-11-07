@@ -19,7 +19,8 @@ def feature_importance_on_openml_task(task: openml.tasks.OpenMLSupervisedTask,
     pipeline.fit(X, y)
     importances = pipeline.steps[-1][-1].feature_importances_
     if len(importances) != X.shape[1]:
-        raise ValueError()
+        raise ValueError('Did not obtain feature importance for all attributes,'
+                         'probably due to constant missing val')
 
     features = task.get_dataset().features
 
