@@ -1,5 +1,5 @@
 import argparse
-import collections
+import feature_encoding
 import logging
 import numpy as np
 import openml
@@ -39,11 +39,10 @@ def run(args):
         if idx >= args.feature_cutoff:
             break
         # Note: by looking at X, we assume some prior-knowledge
-        non_integer_idx = [np.floor(val) == np.ceil(val) for _, val in enumerate(X[:, idx])]
-        if not all(non_integer_idx):
-            counter = collections.Counter(non_integer_idx)
+        n_non_integer_values = feature_encoding.num_non_integer_values(X, idx)
+        if n_non_integer_values > 0:
             logging.info('Skipping feature %s, number of non-integers: %d/%d' % (record['name'],
-                                                                                 counter[False],
+                                                                                 n_non_integer_values,
                                                                                  X.shape[0]))
             continue
 
