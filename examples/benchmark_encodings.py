@@ -57,6 +57,7 @@ def run(args):
         }
 
         for encoding, clf in clfs.items():
+            clf.set_params(estimator__columntransformer__remainder='drop')
             output_dir = os.path.join(args.output_dir, str(task_id), record['name'], encoding, args.classifier_name)
             if os.path.isdir(output_dir):
                 logging.warning('Directory already exists. Skipping. %s' % output_dir)
