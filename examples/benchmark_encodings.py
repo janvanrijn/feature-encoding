@@ -47,8 +47,9 @@ def run(args):
                                                                                  X.shape[0]))
             continue
 
-        all_indices = np.arange(args.feature_cutoff)
-        numeric_indices = all_indices[np.arange(args.feature_cutoff) != idx]
+        n_features = min(args.feature_cutoff, X.shape[1])
+        all_indices = np.arange(n_features)
+        numeric_indices = all_indices[np.arange(n_features) != idx]
 
         kwargs = {'n_iter': 20}
         clfs = {
