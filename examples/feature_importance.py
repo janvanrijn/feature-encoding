@@ -10,7 +10,7 @@ import sklearn.pipeline
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--study_id', type=str, default='OpenML100')
-    parser.add_argument('--task_idx', type=int, default=0)
+    parser.add_argument('--task_idx', type=int, default=5)
     parser.add_argument('--output_dir', type=str, default=os.path.expanduser('~') + '/experiments/feature_encoding')
     parser.add_argument('--n_trees', type=int, default=16)
     parser.add_argument('--random_state', type=int, default=42)
@@ -18,8 +18,6 @@ def parse_args():
 
 
 def run(args):
-    output_dir = os.path.join(args.output_dir, 'importances')
-    os.makedirs(output_dir, exist_ok=True)
     study = openml.study.get_study(args.study_id, 'tasks')
     task_id = study.tasks[args.task_idx]
     # TODO: make this lazy, see issue in issue tracker.
@@ -48,7 +46,11 @@ def run(args):
             'data_type': features[idx].data_type
         })
     df = pd.DataFrame(results)
-    df.to_csv(os.path.join(output_dir, '%d.csv' % task.task_id))
+    df = df.set_index('idx')
+
+    output_dir = os.path.join(args.output_dir, str(task_id))
+    os.makedirs(output_dir, exist_ok=True)
+    df.to_csv(os.path.join(output_dir, 'feature_importances.csv'))
 
 
 if __name__ == '__main__':
