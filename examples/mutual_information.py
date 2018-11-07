@@ -8,6 +8,7 @@ import sklearn.dummy
 import sklearn.ensemble
 import sklearn.impute
 import sklearn.feature_selection
+import traceback
 
 
 def parse_args():
@@ -21,7 +22,6 @@ def parse_args():
 
 
 def process_task(task_id, random_state, per_task_limit):
-    logging.info('Starting on task %d' % task_id)
     n_trees = 16
     results = []
     task = openml.tasks.get_task(task_id)
@@ -77,10 +77,15 @@ def run(args):
         experiment_suffix += '__tasks_%d' % args.task_limit
 
     results = []
-    for task_id in study.tasks:
+    for idx, task_id in enumerate(study.tasks):
+        logging.info('Starting on task %d (%d/%d)' % (task_id, idx+1, len(study.tasks)))
         try:
             results += process_task(task_id, args.random_state, args.per_task_limit)
         except openml.exceptions.OpenMLServerException:
+            traceback.print_exc()
+            pass
+        except ValueError:
+            traceback.print_exc()
             pass
 
     frame = pd.DataFrame(results)
